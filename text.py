@@ -11,16 +11,16 @@ bot = telebot.TeleBot(token)
 def start(message):
     bot.send_message(message.chat.id, 'Hello!')
 engine = pyttsx3.init()
-#  text to speech and audio send message.chat.id
+
+# text to speech and audio send message.chat.id
 @bot.message_handler(content_types=['text'])
 def text_to_speech(message):
-    engine.save_to_file(message, 'audio.wav')
+    engine.save_to_file(message.text, 'audio.wav')
     engine.runAndWait()
+
     sound = AudioSegment.from_wav('audio.wav')
     sound.export('audio.ogg', format='ogg')
 
     audio = open('audio.ogg', 'rb')
-    return audio
     bot.send_audio(message.chat.id, audio)
-
 bot.polling()
