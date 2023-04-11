@@ -11,8 +11,8 @@ bot = telebot.TeleBot(token)
 def start(message):
     bot.send_message(message.chat.id, 'Hello!')
 engine = pyttsx3.init()
-engine.setProperty('rate', 150)    # taxminan 150 soat tezlikda
-engine.setProperty('volume', 0.7)  
+#engine.setProperty('rate', 150)    # taxminan 150 soat tezlikda
+#engine.setProperty('volume', 1)  
 engine.setProperty('voice', 'en-us')
 
 # text to speech and audio send message.chat.id
