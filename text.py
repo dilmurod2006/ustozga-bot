@@ -2,7 +2,7 @@ import telebot
 import pyttsx3
 
 # Telebot kutubxonasi bilan bog'lanish
-bot = telebot.TeleBot("BOT_TOKEN")
+bot = telebot.TeleBot("6261129884:AAFPC_91q0trhW1ByTV-zRandOLHDbltkyg")
 
 # Pyttsx3 kutubxonasi bilan bog'lanish
 engine = pyttsx3.init()
