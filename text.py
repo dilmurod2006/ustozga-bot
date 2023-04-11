@@ -13,7 +13,7 @@ def start(message):
 engine = pyttsx3.init()
 engine.setProperty('rate', 150)    # taxminan 150 soat tezlikda
 engine.setProperty('volume', 1) 
-voices = setProperty('voices')
+voices = getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
 # text to speech and audio send message.chat.id
