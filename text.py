@@ -1,22 +1,22 @@
 import telebot
 import pyttsx3
 
-# Telebot kutubxonasi bilan bog'lanish
-bot = telebot.TeleBot("6261129884:AAFPC_91q0trhW1ByTV-zRandOLHDbltkyg")
 
-# Pyttsx3 kutubxonasi bilan bog'lanish
-engine = pyttsx3.init()
+token = "6261129884:AAFPC_91q0trhW1ByTV-zRandOLHDbltkyg"
 
-# Matnni ovozga aylantirish funktsiyasi
-def text_to_speech(text):
-    engine.say(text)
+bot = telebot.TeleBot(token)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, 'Hello!')
+
+#  text to speech and audio send message.chat.id
+@bot.message_handler(content_types=['text'])
+def text_to_speech(message):
+    engine = pyttsx3.init()
+    engine.save_to_file(message.text, 'audio.ogg')
     engine.runAndWait()
+    audio = open('audio.ogg', 'rb')
+    bot.send_audio(message.chat.id, audio)
 
-# Matn yuborilganda ishga tushiriladigan funktsiya
-@bot.message_handler(func=lambda message: True)
-def echo_all(message):
-    text = message.text
-    text_to_speech(text)
-
-# Botni ishga tushirish
-bot.polling(none_stop=True)
+bot.polling()
