@@ -518,10 +518,19 @@ def translate_en_uz(message):
 def translate_uz_en(message):
     text = tr(source='uz', target='en').translate(message.text)
     bot.send_message(message.chat.id, text)
+# Wikipedia modulini tilini ingliz tiliga sozlamiz
+wikipedia.set_lang("uz")
 def wikipedia_en(message):
-    text = wikipedia.set_lang("en")
-    text = wikipedia.summary(message.text)
-    bot.send_message(message.chat.id, text)
+    try:
+        # Foydalanuvchi yozgan xabarga javob sifatida Wikipedia maqolasini yuboramiz
+        # 1 - foydalanuvchi yozgan xabarning matni
+        # 2 - maxsus kalit so'z ("wiki" deb emas)
+        # 3 - Wikipedia'da qidirish uchun maxsus til (ingliz tilini ishlatamiz)
+        result = wikipedia.summary(message.text)
+        bot.send_message(message.chat.id, result)
+    except:
+        # Agar Wikipedia-da qidirilayotgan maqola topilmagan bo'lsa, foydalanuvchiga xabar beramiz
+        bot.send_message(message.chat.id, "Maqola topilmadi")
 
 
 bot.polling(none_stop=True)
