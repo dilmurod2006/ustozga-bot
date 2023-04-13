@@ -10,7 +10,7 @@ import wikipedia
 
 #########################################################################
 # Bot Settings
-token = '6261129884:AAFPC_91q0trhW1ByTV-zRandOLHDbltkyg'
+token = '6240379695:AAGGHPg6T6tS9gohX8-6NHW1MTc7OwgMPzU'
 bot = telebot.TeleBot(token)
 
 CONTENT_TYPES = ["text", "audio", "document", "photo", "sticker", "video", "video_note", "voice",]
@@ -43,26 +43,11 @@ engine.setProperty('volume', 1)
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 #######################################################################
-
+with open('admins.txt', 'r') as f:
+    admin_ids = [int(line.strip()) for line in f]
 # Start
 @bot.message_handler(commands=['start'])
 def start(message):
-    if message.chat.id in first_group_id:
-        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.row("Translate","Wikiedia")
-        bot.send_message(message.chat.id, 'Assalomu leykum PRE-IELTS group at 4 gruh azosi{}!'.format(message.chat.first_name), reply_markup=markup)
-    elif message.chat.id in second_group_id:
-        bot.send_message(message.chat.id,f"qalesan 2gruh")
-    else:
-        bot.send_message(message.chat.id, "siz gruh azosi emasiz o'qituvchiga ayting sizning chat id raqamingizni botga kiritish kerak")
-
-
-
-# Admin commands
-with open('admins.txt', 'r') as f:
-    admin_ids = [int(line.strip()) for line in f]
-@bot.message_handler(commands=['admin'])
-def admin(message):
     if message.chat.id in admin_ids:
         if str(message.chat.id) not in files:
             files[str(message.chat.id)]={"audio":[],"video":[],"document":[],"rasm":[]}
@@ -107,9 +92,36 @@ def admin(message):
         markup.row("FirstGroup","SecondGroup")
         markup.row("Speech to text","Text to speech")
         bot.send_message(message.chat.id,f"""{tr(source="uz",target="en").translate("Assalomu alaykum O'qituvchi botingiz xizmatingizga tayor")}""", reply_markup=markup)
+    if message.chat.id in first_group_id:
+        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.row("Translate","Wikiedia")
+        bot.send_message(message.chat.id, 'Assalomu leykum PRE-IELTS group at 4 gruh azosi{}!'.format(message.chat.first_name), reply_markup=markup)
+    elif message.chat.id in second_group_id:
+        bot.send_message(message.chat.id,f"qalesan 2gruh")
+    else:
+        bot.send_message(message.chat.id, "siz gruh azosi emasiz o'qituvchiga ayting sizning chat id raqamingizni botga kiritish kerak")
+
+
+
+# Admin commands
+
 # Admin functions
-@bot.message_handler(content_types=CONTENT_TYPES)
+# for First group
+# First group functions
+# Translate and wikipedia
+# translate en-uz and uz-en
+# wikipedia en 
+@bot.message_handler(content_types=['text'])
 def admin_functions(message):
+    if message.text == 'en-uz':
+        bot.send_message(message.chat.id, 'Ingiliz tilida tarjima qilinadiga matn yuboring')
+        bot.register_next_step_handler(message, translate_en_uz)
+    elif message.text == 'uz-en':
+        bot.send_message(message.chat.id, "matn yuboring")
+        bot.register_next_step_handler(message, translate_uz_en)
+    elif message.text == 'Wikiedia':
+        bot.send_message(message.chat.id, "Qanday malumot kerak nima hqida bilmoqchisiz?")
+        bot.register_next_step_handler(message, wikipedia_en)
     if message.text == "FirstGroup":
         markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.row("📥Upload file","➕Add pupil id")
@@ -154,6 +166,16 @@ def admin_functions(message):
         markup.row("🔙 ortga")
         bot.send_message(message.chat.id, "Send me text",reply_markup=markup)
         bot.register_next_step_handler(message, tts2)
+    elif message.text == 'Translate':
+        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.row("en-uz","uz-en")
+        markup.row("🔙 Back")
+        bot.send_message(message.chat.id, 'Tilni tanlang', reply_markup=markup)
+    elif message.text == '🔙 Back':
+        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.row("Translate","Wikiedia")
+        bot.send_message(message.chat.id, 'Asosiy sahifaga qaytingiz qanday yordam kerak tugmalarni tanlashingiz '.format(message.chat.first_name), reply_markup=markup)
+
 # the back button
 # @bot.message_handler(content_types=['text'])
 # def back(message):
@@ -165,7 +187,7 @@ def admin_functions(message):
         markup.row("🔙 ortga")                                
         bot.send_message(message.chat.id, "Hali ishga tushmagan yaqinda ishga tushadi", reply_markup=markup) #################
     elif message.text == "First-Group":
-        bot.register_next_step_handler(message,document1)
+        bot.register_next_step_handler(message,document)
     elif message.text == "Second-Group":
         bot.send_message(message.chat.id, "Hali ishga tushmagan yaqinda ishga tushadi")
         # bot.register_next_step_handler(message,document2)
@@ -490,34 +512,6 @@ def tts2(message):
                     bot.send_audio(user_id2, audio)
     audio.close()
 # Text to speech end
-
-# for First group
-# First group functions
-# Translate and wikipedia
-# translate en-uz and uz-en
-# wikipedia en 
-@bot.message_handler(content_types=['text'])
-def translate_wikipedia(message):
-    if message.text == 'Translate':
-        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.row("en-uz","uz-en")
-        markup.row("🔙 Back")
-        bot.send_message(message.chat.id, 'Tilni tanlang', reply_markup=markup)
-    elif message.text == 'en-uz':
-        bot.send_message(message.chat.id, 'Ingiliz tilida tarjima qilinadiga matn yuboring')
-        bot.register_next_step_handler(message, translate_en_uz)
-    elif message.text == 'uz-en':
-        bot.send_message(message.chat.id, "matn yuboring")
-        bot.register_next_step_handler(message, translate_uz_en)
-    elif message.text == 'Wikiedia':
-        bot.send_message(message.chat.id, "Qanday malumot kerak nima hqida bilmoqchisiz?")
-        bot.register_next_step_handler(message, wikipedia_en)
-    elif message.text == '🔙 Back':
-        markup=types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.row("Translate","Wikiedia")
-        bot.send_message(message.chat.id, 'Asosiy sahifaga qaytingiz qanday yordam kerak tugmalarni tanlashingiz '.format(message.chat.first_name), reply_markup=markup)
-
-@bot.message_handler(content_types=['text'])
 def translate_en_uz(message):
     text = tr(source='en', target='uz').translate(message.text)
     bot.send_message(message.chat.id, text)
@@ -528,4 +522,6 @@ def wikipedia_en(message):
     text = wikipedia.set_lang("en")
     text = wikipedia.summary(message.text)
     bot.send_message(message.chat.id, text)
+
+
 bot.polling(none_stop=True)
